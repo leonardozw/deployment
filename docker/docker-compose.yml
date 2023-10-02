@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  catalog-service:
+    depends_on:
+      - polar-postgres
+      - config-server
+    image: "catalog-service:latest"
+    container_name: "catalog-service"
+    ports:
+      - 9001:9001
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=testdata
+
+  config-server:
+    image: "config-server:0.0.1-SNAPSHOT"
+    container_name: "config-server"
+    ports:
+      - 8888:8888
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+
+  polar-postgres:
+    image: postgres:latest
+    container_name: "polar-postgres"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=polardb_catalog
