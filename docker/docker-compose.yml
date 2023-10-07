@@ -33,7 +33,7 @@ services:
     depends_on:
       - polar-rabbitmq
     image: "dispatcher-service"
-    container_name: dispatcher-service
+    container_name: "dispatcher-service"
     ports:
       - 9003:9003
     environment:
@@ -67,9 +67,21 @@ services:
 
   polar-rabbitmq:
     image: rabbitmq:3.10-management
-    container_name: polar-rabbitmq
+    container_name: "polar-rabbitmq"
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+  
+  polar-keycloak:
+    image: quay.io/keycloak/keycloak:19.0
+    container_name: "polar-keycloak"
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    environment:
+      - KEYCLOAK_ADMIN=user
+      - KEYCLOAK_ADMIN_PASSWORD=password
+    ports:
+      - 8080:8080
